@@ -1,0 +1,50 @@
+NET45;ILRuntime
+一.热更：
+1.在vs中的Unity.Hotfix的程序集下新建一个文件夹，放自己的文件
+2.编译后会覆盖Assets\Res\Code对应的ab包文件Hotfix.dll.bytes，Hotfix.mdb.bytes，Hotfix.pdb.bytes
+3.直接用ab包加载热更代码了。
+二.ab包
+BuildEditor是打包工具代码，ab包根据源码会放在ET\Release\PC\StreamingAssets文件加下
+1.设置ab包 选中prefab,Tools->打包工具，标记执行完就会设置好ab包名。
+2.设置打包平台
+3.点击开始打包等待完成。
+
+// 下载ab包 Init.cs
+await BundleHelper.DownloadBundle();
+->
+BundleHelper.cs
+StartDownLoadResources->bundleDownloaderComponent.StartAsync->
+BundleDownloaderComponent下载ab包用的
+
+
+本地测需要改Define的
+#if UNITY_EDITOR && !ASYNC
+		public static bool IsAsync = true;
+
+本地Version.txt		
+{"Version":0,"TotalSize":0,"FileInfoDict":{}}
+
+注意：
+如果放到手机上，注意要打成对应平台的ab包。
+三.运行
+会加载prefab到场景中
+注意事项：
+1.prefab挂CanvasConfig脚本，自动找parent
+2.UI的ReferenceCollector把canvas拖入，否则不会放在canvas下。
+四.proto
+HotfixMessage.cs 文件在ET\Unity\Hotfix\Module\Message下,unity工程里找不到，因为是热更的。
+如果是热更，服务器端要重新生成。否则不会处理信息。
+
+五.热更服务器
+
+测试热更的服务器（资源apache可以作为热更的服务器，修改下配置文件，同时热更资源和代码）
+apache安装方法：https://www.cnblogs.com/jave1ove/p/5486427.html
+如果有端口冲突，Listen改端口8080
+443端口冲突直接用netstat -aon|findstr "443" 找到对应pid杀掉即可。
+
+
+RPC,Actor,SendMessage
+
+Professional:VS2017
+KBJFW-NXHK6-W4WJM-CRMQB-G3CDH
+
